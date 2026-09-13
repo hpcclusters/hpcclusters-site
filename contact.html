@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Contact Us — HPCClusters</title>
+<meta name="description" content="Get in touch with HPCClusters about your HPC training and implementation needs." />
+<link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap nav">
+    <a class="brand" href="index.html">
+      <svg class="mark" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <line x1="16" y1="7" x2="6" y2="24" stroke="#f59e0b" stroke-width="2"/>
+        <line x1="16" y1="7" x2="26" y2="24" stroke="#f59e0b" stroke-width="2"/>
+        <line x1="6" y1="24" x2="26" y2="24" stroke="#3a4a6b" stroke-width="2"/>
+        <circle cx="16" cy="7" r="4.2" fill="#f59e0b"/>
+        <circle cx="6" cy="24" r="4.2" fill="#dde3ee"/>
+        <circle cx="26" cy="24" r="4.2" fill="#dde3ee"/>
+      </svg>
+      <span>HPCClusters<span class="sub">HPC · Cloud · Kubernetes</span></span>
+    </a>
+    <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="consulting.html">Consulting</a></li>
+      <li><a href="teaching.html">Teaching</a></li>
+      <li><a href="about.html">About Us</a></li>
+      <li><a href="contact.html" class="active">Contact Us</a></li>
+      <li class="cta"><a href="contact.html" class="btn btn-primary">Contact Us</a></li>
+    </ul>
+  </div>
+</header>
+
+<section class="hero hero-small">
+  <div class="wrap">
+    <span class="eyebrow">Get in touch</span>
+    <h1>Questions or comments?</h1>
+    <p class="lede">We know that every client has special needs and circumstances. Tell us more about your HPC, cloud, or data center project, and we'll get back to you soon with ideas on how we can support your training and implementation needs.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="contact-layout">
+      <div>
+        <h2>HPCClusters</h2>
+        <ul class="info-list">
+          <li><span class="k">Location</span><span>Serving the San Francisco Bay Area</span></li>
+        </ul>
+      </div>
+
+      <form
+        class="contact-form"
+        id="contact-form"
+        name="contact"
+        method="POST"
+        action="/thank-you.html"
+        data-netlify="true"
+        data-netlify-honeypot="bot-field"
+      >
+        <input type="hidden" name="form-name" value="contact" />
+        <p class="hp-field" aria-hidden="true">
+          <label>Leave this field blank<input name="bot-field" tabindex="-1" autocomplete="off" /></label>
+        </p>
+
+        <h3>Drop us a line</h3>
+        <div class="field">
+          <label for="name">Name</label>
+          <input id="name" name="name" type="text" required />
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" required />
+        </div>
+        <div class="field">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" rows="5" required></textarea>
+        </div>
+        <button class="btn btn-primary" type="submit">Send</button>
+        <p class="form-note">Handled by Netlify Forms — submissions land in your Netlify dashboard, and you can turn on an email notification to your inbox from there.</p>
+      </form>
+      <div class="form-success" id="form-success" hidden>
+        <h3>Message sent</h3>
+        <p>Thanks for reaching out — we'll get back to you soon.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="footer-top">
+      <a class="footer-brand" href="index.html">
+        <svg class="mark" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+          <line x1="16" y1="7" x2="6" y2="24" stroke="#f59e0b" stroke-width="2"/>
+          <line x1="16" y1="7" x2="26" y2="24" stroke="#f59e0b" stroke-width="2"/>
+          <line x1="6" y1="24" x2="26" y2="24" stroke="#3a4a6b" stroke-width="2"/>
+          <circle cx="16" cy="7" r="4.2" fill="#f59e0b"/>
+          <circle cx="6" cy="24" r="4.2" fill="#dde3ee"/>
+          <circle cx="26" cy="24" r="4.2" fill="#dde3ee"/>
+        </svg>
+        HPCClusters
+      </a>
+      <ul class="footer-links" style="list-style:none;padding:0;margin:0;">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="consulting.html">Consulting</a></li>
+        <li><a href="teaching.html">Teaching</a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="contact.html">Contact Us</a></li>
+      </ul>
+    </div>
+    <div class="footer-bottom">
+      <span>Copyright © <span id="year">2026</span> High Performance Computing Clusters — All Rights Reserved.</span>
+      <span>Serving the San Francisco Bay Area</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/script.js"></script>
+</body>
+</html>

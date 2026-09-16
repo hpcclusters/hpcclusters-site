@@ -189,14 +189,44 @@ header.site {
 .hero-actions { display: flex; gap: 12px; margin-top: 30px; flex-wrap: wrap; }
 .hero-small { padding: 64px 0 72px; }
 
-.node-art { width: 100%; height: auto; opacity: 0.95; }
-.node-art circle.node { fill: var(--amber-500); }
-.node-art circle.node.dim { fill: #3a4a6b; }
-.node-art line { stroke: #2c3c5c; stroke-width: 1.4; }
-.node-art .pulse { animation: pulse 2.6s ease-in-out infinite; }
-.node-art .pulse2 { animation: pulse 2.6s ease-in-out infinite 0.9s; }
-.node-art .pulse3 { animation: pulse 2.6s ease-in-out infinite 1.7s; }
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+.hybrid-flow { width: 100%; height: auto; overflow: visible; }
+
+.hybrid-flow .flow-path {
+  fill: none;
+  stroke: #2c3c5c;
+  stroke-width: 1.6;
+  stroke-dasharray: 3 7;
+  stroke-linecap: round;
+}
+
+.hybrid-flow .particle {
+  fill: var(--amber-500);
+  filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.65));
+}
+.hybrid-flow .particle-cloud { fill: var(--amber-400); }
+
+.hybrid-flow .node-badge circle {
+  fill: var(--navy-700);
+  stroke: rgba(255, 255, 255, 0.14);
+  stroke-width: 1.5;
+}
+.hybrid-flow .node-badge-primary circle {
+  fill: var(--navy-800);
+  stroke: var(--amber-500);
+  stroke-width: 2;
+}
+
+.hybrid-flow .flow-label {
+  fill: var(--slate-400);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+.hybrid-flow .flow-label-primary { fill: var(--amber-400); font-weight: 600; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hybrid-flow .particle { display: none; }
+}
 
 /* ---------- sections ---------- */
 section { padding: 88px 0; }

@@ -14,27 +14,28 @@ document.addEventListener("DOMContentLoaded", function () {
   var yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  // Contact form -> Netlify Forms, submitted via fetch so the page doesn't reload
+  // Contact form -> Web3Forms, submitted via fetch so the page doesn't reload
   var form = document.getElementById("contact-form");
   if (form) {
     form.addEventListener("submit", function (e) {
       e.preventDefault();
-      var data = new URLSearchParams(new FormData(form)).toString();
+      var payload = Object.fromEntries(new FormData(form));
 
-      fetch("/", {
+      fetch(form.action, {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: data,
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(payload),
       })
-        .then(function (response) {
-          if (!response.ok) throw new Error("Form submission failed");
+        .then(function (response) { return response.json(); })
+        .then(function (result) {
+          if (!result.success) throw new Error(result.message || "Form submission failed");
           var success = document.getElementById("form-success");
           form.hidden = true;
           if (success) success.hidden = false;
         })
         .catch(function () {
-          // Netlify Forms needs the JS build step or a real deploy to respond;
-          // if the fetch fails (e.g. local preview), fall back to a normal submit.
+          // If the AJAX request fails, fall back to a normal submit so
+          // Web3Forms still receives it and redirects to the thank-you page.
           form.submit();
         });
     });

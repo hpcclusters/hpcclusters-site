@@ -360,8 +360,6 @@ form.contact-form[hidden] { display: none; }
 .field input:focus, .field textarea:focus { outline: 2px solid var(--amber-400); outline-offset: 1px; }
 .form-note { font-size: 0.82rem; color: var(--slate-400); }
 
-.hp-field { position: absolute; left: -9999px; top: -9999px; }
-
 .form-success {
   background: var(--white);
   border: 1px solid var(--slate-200);

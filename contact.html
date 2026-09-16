@@ -52,19 +52,9 @@
         </ul>
       </div>
 
-      <form
-        class="contact-form"
-        id="contact-form"
-        name="contact"
-        method="POST"
-        action="/thank-you.html"
-        data-netlify="true"
-        data-netlify-honeypot="bot-field"
-      >
-        <input type="hidden" name="form-name" value="contact" />
-        <p class="hp-field" aria-hidden="true">
-          <label>Leave this field blank<input name="bot-field" tabindex="-1" autocomplete="off" /></label>
-        </p>
+      <form class="contact-form" id="contact-form" method="POST" action="https://api.web3forms.com/submit">
+        <input type="hidden" name="access_key" value="960ab135-d630-43d4-9259-5df151b44369" />
+        <input type="hidden" name="redirect" value="https://hpcclusters.com/thank-you.html" />
 
         <h3>Drop us a line</h3>
         <div class="field">
@@ -80,7 +70,7 @@
           <textarea id="message" name="message" rows="5" required></textarea>
         </div>
         <button class="btn btn-primary" type="submit">Send</button>
-        <p class="form-note">Handled by Netlify Forms — submissions land in your Netlify dashboard, and you can turn on an email notification to your inbox from there.</p>
+        <p class="form-note">Handled by Web3Forms — submissions are emailed straight to our inbox.</p>
       </form>
       <div class="form-success" id="form-success" hidden>
         <h3>Message sent</h3>

@@ -188,9 +188,18 @@
   const ctx = canvas.getContext('2d');
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   const LW = 600, LH = 480;
-  canvas.width  = LW * dpr;
-  canvas.height = LH * dpr;
-  ctx.scale(dpr, dpr);
+
+  // Measure the canvas's actual CSS display size BEFORE changing its dimensions,
+  // so the internal pixel count matches physical pixels exactly (no resampling blur).
+  (function () {
+    const r = canvas.getBoundingClientRect();
+    const cssW = r.width  > 0 ? r.width  : LW;
+    const cssH = r.height > 0 ? r.height : LH;
+    canvas.width  = Math.round(cssW * dpr);
+    canvas.height = Math.round(cssH * dpr);
+    // Map logical LW×LH coordinate space onto the physical pixel grid.
+    ctx.setTransform(canvas.width / LW, 0, 0, canvas.height / LH, 0, 0);
+  })();
 
   /* ---- Colors ---- */
   const C = {

@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>HPCClusters — HPC, Cloud & Data Center Consulting</title>
-<meta name="description" content="HPCClusters helps small-to-medium enterprises design, deploy, and operate HPC and AI infrastructure — OpenHPC and Kubernetes clusters, cloud and hybrid deployment strategy, and data center facility design." />
+<meta name="description" content="HPCClusters helps small-to-medium enterprises design, deploy, and operate HPC and AI infrastructure — open-source HPC frameworks and Kubernetes clusters, cloud and hybrid deployment strategy, and data center facility design." />
 <link rel="stylesheet" href="assets/styles.css" />
 </head>
 <body>
@@ -38,115 +38,22 @@
     <div>
       <span class="eyebrow">Independent HPC &amp; cloud consulting</span>
       <h1>HPC and AI infrastructure expertise for the small-to-medium enterprise.</h1>
-      <p class="lede">HPCClusters helps SME teams classify workloads, choose the right deployment model, and build on OpenHPC and Kubernetes together — spanning on-prem, colocation, cloud, and hybrid, down to the data center itself.</p>
+      <p class="lede">HPCClusters helps SME teams classify workloads, choose the right deployment model, and build on open-source HPC frameworks and Kubernetes together — spanning on-prem, colocation, cloud, and hybrid, down to the data center itself.</p>
       <div class="hero-actions">
         <a href="contact.html" class="btn btn-primary">Contact Us</a>
         <a href="#services" class="btn btn-ghost">See Services</a>
       </div>
     </div>
     <div>
-      <svg class="hybrid-flow" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diagram of data flowing from users to a local HPC cluster and out to the cloud, showing a hybrid installation">
-
-        <!-- connecting paths: users -> cluster -> cloud -->
-        <path id="path-u1" class="flow-path" d="M90,70 C200,70 210,200 280,200" />
-        <path id="path-u2" class="flow-path" d="M90,200 C180,200 200,200 280,200" />
-        <path id="path-u3" class="flow-path" d="M90,330 C200,330 210,200 280,200" />
-        <path id="path-c1" class="flow-path" d="M360,200 C430,200 440,110 490,110" />
-        <path id="path-c2" class="flow-path" d="M360,200 C430,200 440,290 490,290" />
-
-        <!-- traveling particles, two per path for a continuous stream -->
-        <circle class="particle" r="4">
-          <animateMotion dur="2.6s" begin="0s" repeatCount="indefinite"><mpath href="#path-u1"/></animateMotion>
-        </circle>
-        <circle class="particle" r="4">
-          <animateMotion dur="2.6s" begin="1.3s" repeatCount="indefinite"><mpath href="#path-u1"/></animateMotion>
-        </circle>
-
-        <circle class="particle" r="4">
-          <animateMotion dur="2.9s" begin="0.4s" repeatCount="indefinite"><mpath href="#path-u2"/></animateMotion>
-        </circle>
-        <circle class="particle" r="4">
-          <animateMotion dur="2.9s" begin="1.85s" repeatCount="indefinite"><mpath href="#path-u2"/></animateMotion>
-        </circle>
-
-        <circle class="particle" r="4">
-          <animateMotion dur="2.7s" begin="0.8s" repeatCount="indefinite"><mpath href="#path-u3"/></animateMotion>
-        </circle>
-        <circle class="particle" r="4">
-          <animateMotion dur="2.7s" begin="2.15s" repeatCount="indefinite"><mpath href="#path-u3"/></animateMotion>
-        </circle>
-
-        <circle class="particle particle-cloud" r="4">
-          <animateMotion dur="3.1s" begin="0.2s" repeatCount="indefinite"><mpath href="#path-c1"/></animateMotion>
-        </circle>
-        <circle class="particle particle-cloud" r="4">
-          <animateMotion dur="3.1s" begin="1.75s" repeatCount="indefinite"><mpath href="#path-c1"/></animateMotion>
-        </circle>
-
-        <circle class="particle particle-cloud" r="4">
-          <animateMotion dur="3.3s" begin="0.9s" repeatCount="indefinite"><mpath href="#path-c2"/></animateMotion>
-        </circle>
-        <circle class="particle particle-cloud" r="4">
-          <animateMotion dur="3.3s" begin="2.55s" repeatCount="indefinite"><mpath href="#path-c2"/></animateMotion>
-        </circle>
-
-        <!-- user nodes -->
-        <g class="node-badge" transform="translate(90,70)">
-          <circle r="24" />
-          <g stroke="var(--slate-200)" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="0" cy="-4" r="4.2"/>
-            <path d="M-8,9 C-8,1.5 8,1.5 8,9"/>
-          </g>
-        </g>
-        <g class="node-badge" transform="translate(90,200)">
-          <circle r="24" />
-          <g stroke="var(--slate-200)" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="0" cy="-4" r="4.2"/>
-            <path d="M-8,9 C-8,1.5 8,1.5 8,9"/>
-          </g>
-        </g>
-        <g class="node-badge" transform="translate(90,330)">
-          <circle r="24" />
-          <g stroke="var(--slate-200)" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="0" cy="-4" r="4.2"/>
-            <path d="M-8,9 C-8,1.5 8,1.5 8,9"/>
-          </g>
-        </g>
-        <text class="flow-label" x="90" y="376" text-anchor="middle">USERS</text>
-
-        <!-- local HPC cluster (central, primary node) -->
-        <g class="node-badge node-badge-primary" transform="translate(320,200)">
-          <circle r="40" />
-          <g stroke="var(--amber-400)" stroke-width="1.9" fill="none">
-            <rect x="-15" y="-18" width="30" height="12" rx="2.5"/>
-            <rect x="-15" y="3" width="30" height="12" rx="2.5"/>
-            <circle cx="-9" cy="-12" r="1.4" fill="var(--amber-400)" stroke="none"/>
-            <circle cx="-9" cy="9" r="1.4" fill="var(--amber-400)" stroke="none"/>
-          </g>
-        </g>
-        <text class="flow-label flow-label-primary" x="320" y="260" text-anchor="middle">LOCAL HPC CLUSTER</text>
-
-        <!-- cloud nodes -->
-        <g class="node-badge" transform="translate(530,110)">
-          <circle r="24" />
-          <g transform="translate(-12,-12)">
-            <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" fill="none" stroke="var(--slate-200)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-          </g>
-        </g>
-        <g class="node-badge" transform="translate(530,290)">
-          <circle r="24" />
-          <g transform="translate(-12,-12)">
-            <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" fill="none" stroke="var(--slate-200)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-          </g>
-        </g>
-        <text class="flow-label" x="530" y="346" text-anchor="middle">CLOUD</text>
-      </svg>
+      <canvas id="hpc-anim" class="hybrid-flow" width="600" height="380"
+        role="img"
+        aria-label="Animation showing HPC jobs dispatched to an on-premises cluster running Slurm and Kubernetes, with burst jobs routed to AWS EKS, Azure AKS, and Google GKE"></canvas>
     </div>
   </div>
 
   <div class="wrap stats">
     <div class="stat"><b>Top&nbsp;500</b><span>supercomputers designed &amp; administered</span></div>
-    <div class="stat"><b>OpenHPC&nbsp;+&nbsp;K8s</b><span>traditional HPC &amp; cloud-native, together</span></div>
+    <div class="stat"><b>Open-Source&nbsp;+&nbsp;K8s</b><span>traditional HPC &amp; cloud-native, together</span></div>
     <div class="stat"><b>SME‑focused</b><span>no hardware or licensing upsell</span></div>
     <div class="stat"><b>Hybrid&nbsp;Ready</b><span>on-prem, cloud, and everywhere between</span></div>
   </div>
@@ -173,8 +80,8 @@
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
         </div>
         <h3>HPC &amp; Kubernetes Cluster Engineering</h3>
-        <p>Need a cluster that spans traditional HPC and cloud-native workloads? We deploy OpenHPC and Kubernetes side by side, so batch scientific computing and containerized AI/ML pipelines share one infrastructure.</p>
-        <span class="tag">$ kubectl apply -f ohpc-hybrid.yaml</span>
+        <p>Need a cluster that spans traditional HPC and cloud-native workloads? We deploy open-source schedulers and Kubernetes side by side, so batch scientific computing and containerized AI/ML pipelines share one infrastructure.</p>
+        <span class="tag">$ kubectl apply -f hpc-hybrid.yaml</span>
       </div>
       <div class="card">
         <div class="icon">
@@ -266,5 +173,412 @@
 </footer>
 
 <script src="assets/script.js"></script>
+<script>
+/* ============================================================
+   HPC Cluster animation — job dispatch to on-prem + cloud burst
+   ============================================================ */
+(function () {
+  'use strict';
+
+  const canvas = document.getElementById('hpc-anim');
+  if (!canvas) return;
+
+  /* Respect reduced-motion preference */
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const ctx = canvas.getContext('2d');
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+  /* Logical canvas size */
+  const LW = 600, LH = 380;
+  canvas.width  = LW * dpr;
+  canvas.height = LH * dpr;
+  ctx.scale(dpr, dpr);
+
+  /* ---- Colors ---- */
+  const C = {
+    navy900:  '#0b1220',
+    navy800:  '#101a2e',
+    navy700:  '#16233c',
+    slate600: '#45516b',
+    slate400: '#7c879e',
+    slate200: '#dde3ee',
+    pathLine: '#2c3c5c',
+    amber:    '#f59e0b',
+    amberBrt: '#fbbf24',
+    aws:      '#FF9900',
+    azure:    '#0078D4',
+    gcp:      '#4285F4',
+  };
+
+  /* ---- Layout ---- */
+  /* Job queue */
+  const QX   = 18;   /* left edge of job cards */
+  const QW   = 70;   /* card width */
+  const QH   = 24;   /* card height */
+  const QGAP = 10;   /* gap between cards */
+  const QTOP = 80;   /* y of first card */
+  const QEXIT_X = QX + QW + 2;  /* right edge where packets enter the path */
+
+  /* Scheduler */
+  const SCHED = { x: 175, y: 190, r: 28 };
+
+  /* On-prem cluster grid 3×3 */
+  const GCOLS = 3, GROWS = 3, GSPACE = 36;
+  const GCX = 327, GCY = 192;
+  const GNODES = [];
+  for (let r = 0; r < GROWS; r++) {
+    for (let c = 0; c < GCOLS; c++) {
+      GNODES.push({
+        x: GCX + (c - 1) * GSPACE,
+        y: GCY + (r - 1) * GSPACE,
+        active: 0,            /* seconds of active time remaining */
+        phaseOff: Math.random() * Math.PI * 2,
+      });
+    }
+  }
+
+  /* Cloud targets */
+  const CLOUDS = [
+    { x: 520, y:  82, color: C.aws,   name: 'AWS',   k8s: 'EKS' },
+    { x: 520, y: 192, color: C.azure, name: 'Azure', k8s: 'AKS' },
+    { x: 520, y: 302, color: C.gcp,   name: 'GCP',   k8s: 'GKE' },
+  ];
+
+  /* Cluster bounding box */
+  const CPAD = 18;
+  const CBOX = {
+    x: GCX - GSPACE - CPAD,
+    y: GCY - GSPACE - CPAD,
+    w: GCOLS * GSPACE + CPAD * 2,
+    h: GROWS * GSPACE + CPAD * 2,
+  };
+
+  /* ---- State ---- */
+  const JOB_LABELS = ['CFD', 'ML', 'Genome', 'MD Sim', 'FEA', 'LLM', 'Monte', 'DFT', 'Batch'];
+  let labelIdx = 0;
+  let queue = [];      /* { label: string } */
+  let packets = [];    /* in-flight job packets */
+
+  let lastSpawn    = -2;
+  let lastDispatch = -3;
+
+  /* ---- Helpers ---- */
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  function quadBez(p0, cp, p1, t) {
+    const ax = lerp(p0.x, cp.x, t), ay = lerp(p0.y, cp.y, t);
+    const bx = lerp(cp.x, p1.x, t), by = lerp(cp.y, p1.y, t);
+    return { x: lerp(ax, bx, t), y: lerp(ay, by, t) };
+  }
+
+  function rrect(x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.roundRect(x, y, w, h, r);
+  }
+
+  /* ---- Spawn and dispatch ---- */
+  function spawnJob() {
+    if (queue.length < 5) {
+      queue.push({ label: JOB_LABELS[labelIdx++ % JOB_LABELS.length] });
+    }
+  }
+
+  function dispatchJob() {
+    if (!queue.length) return;
+    const job = queue.shift();
+    const toCloud = Math.random() < 0.38;
+    const startY = QTOP + 12;  /* packet leaves from top of queue area */
+
+    if (toCloud) {
+      const cl = CLOUDS[Math.floor(Math.random() * CLOUDS.length)];
+      /* Phase 0: straight left→sched  |  Phase 1: curved sched→cloud */
+      const cpx = lerp(SCHED.x, cl.x, 0.5);
+      const cpy = lerp(SCHED.y, cl.y, 0.5) + (cl.y < SCHED.y ? -28 : cl.y > SCHED.y ? 28 : 0);
+      packets.push({
+        job, color: cl.color,
+        phase: 0, t: 0,
+        p0: { x: QEXIT_X, y: startY },
+        p1: { x: SCHED.x, y: SCHED.y },
+        p2: { x: cl.x - 24, y: cl.y },
+        cp: { x: cpx, y: cpy },
+        targetNode: null, isCloud: true,
+      });
+    } else {
+      const idle = GNODES.filter(n => n.active <= 0);
+      if (!idle.length) { queue.unshift(job); return; }
+      const node = idle[Math.floor(Math.random() * idle.length)];
+      const cpx = lerp(SCHED.x, node.x, 0.5);
+      const cpy = lerp(SCHED.y, node.y, 0.5) - 10;
+      packets.push({
+        job, color: C.amber,
+        phase: 0, t: 0,
+        p0: { x: QEXIT_X, y: startY },
+        p1: { x: SCHED.x, y: SCHED.y },
+        p2: { x: node.x, y: node.y },
+        cp: { x: cpx, y: cpy },
+        targetNode: node, isCloud: false,
+      });
+      /* Reserve node immediately */
+      node.active = 0.01;
+    }
+  }
+
+  /* ---- Drawing primitives ---- */
+
+  function drawPath(x1, y1, x2, y2, cpx, cpy) {
+    ctx.beginPath();
+    if (cpx !== undefined) {
+      ctx.moveTo(x1, y1);
+      ctx.quadraticCurveTo(cpx, cpy, x2, y2);
+    } else {
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+    }
+    ctx.stroke();
+  }
+
+  function drawServerIcon(cx, cy, color) {
+    ctx.fillStyle = color;
+    ctx.fillRect(cx - 6, cy - 5, 12, 4);
+    ctx.fillRect(cx - 6, cy + 1, 12, 4);
+    /* status LED */
+    ctx.fillStyle = C.navy700;
+    ctx.beginPath(); ctx.arc(cx + 3, cy - 3, 1.2, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx + 3, cy + 3, 1.2, 0, Math.PI * 2); ctx.fill();
+  }
+
+  function drawCloudShape(cx, cy, size, color) {
+    const s = size / 18;
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.scale(s, s);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.8 / s;
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ctx.arc(-5, 3, 6,  Math.PI * 0.55, Math.PI * 1.5);
+    ctx.arc( 0,-5, 7.5, Math.PI,        0);
+    ctx.arc( 7, 2, 5,  Math.PI * 1.5,  Math.PI * 0.5);
+    ctx.lineTo(-5, 7);
+    ctx.closePath();
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  /* ---- Main frame ---- */
+  let rafId;
+  let prevT = 0;
+
+  function frame(ts) {
+    const now = ts * 0.001;
+    const dt  = Math.min(now - prevT, 0.05);
+    prevT = now;
+
+    /* Timing */
+    if (now - lastSpawn    > 1.7)  { spawnJob();    lastSpawn    = now; }
+    if (now - lastDispatch > 2.3 && queue.length) { dispatchJob(); lastDispatch = now; }
+
+    /* Decay active nodes */
+    GNODES.forEach(n => { if (n.active > 0) n.active -= dt; });
+
+    /* Update packets */
+    const PH0_SPEED = 0.026, PH1_SPEED = 0.018;
+    packets.forEach(p => {
+      if (p.phase === 0) {
+        p.t += PH0_SPEED;
+        if (p.t >= 1) { p.phase = 1; p.t = 0; }
+      } else {
+        p.t += PH1_SPEED;
+        if (p.t >= 1) {
+          p.done = true;
+          if (!p.isCloud && p.targetNode) {
+            p.targetNode.active = 3 + Math.random() * 5;
+          }
+        }
+      }
+    });
+    packets = packets.filter(p => !p.done);
+
+    /* ===== RENDER ===== */
+    ctx.clearRect(0, 0, LW, LH);
+
+    /* -- Static connection paths -- */
+    ctx.save();
+    ctx.setLineDash([3, 7]);
+    ctx.strokeStyle = C.pathLine;
+    ctx.lineWidth   = 1.5;
+    ctx.lineCap     = 'round';
+
+    /* queue exit → sched */
+    drawPath(QEXIT_X, SCHED.y, SCHED.x - SCHED.r - 1, SCHED.y);
+
+    /* sched → cluster */
+    drawPath(SCHED.x + SCHED.r + 1, SCHED.y, CBOX.x, SCHED.y);
+
+    /* cluster → each cloud (curved) */
+    CLOUDS.forEach(cl => {
+      const ox = CBOX.x + CBOX.w;
+      const oy = SCHED.y;
+      const cpx = (ox + cl.x - 24) / 2;
+      const cpy = (oy + cl.y) / 2 + (cl.y < oy ? -30 : cl.y > oy ? 30 : 0);
+      drawPath(ox, oy, cl.x - 24, cl.y, cpx, cpy);
+    });
+
+    ctx.restore();
+
+    /* -- Job queue -- */
+    ctx.fillStyle = C.amber;
+    ctx.font = 'bold 8px monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText('JOB QUEUE', QX, QTOP - 10);
+
+    queue.forEach((job, i) => {
+      const qy = QTOP + i * (QH + QGAP);
+      rrect(QX, qy, QW, QH, 4);
+      ctx.fillStyle   = C.navy700;
+      ctx.fill();
+      ctx.strokeStyle = C.slate600;
+      ctx.lineWidth   = 1;
+      ctx.stroke();
+      ctx.fillStyle   = C.slate200;
+      ctx.font        = '7.5px monospace';
+      ctx.textAlign   = 'center';
+      ctx.fillText(job.label, QX + QW / 2, qy + 16);
+    });
+
+    /* Queue-to-sched connector dot */
+    ctx.fillStyle = C.slate600;
+    ctx.beginPath();
+    ctx.arc(QEXIT_X + 2, SCHED.y, 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    /* -- Scheduler node -- */
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(SCHED.x, SCHED.y, SCHED.r, 0, Math.PI * 2);
+    ctx.fillStyle   = C.navy800;
+    ctx.fill();
+    ctx.strokeStyle = C.amberBrt;
+    ctx.lineWidth   = 2;
+    ctx.stroke();
+    drawServerIcon(SCHED.x, SCHED.y - 2, C.amberBrt);
+
+    ctx.fillStyle = C.amberBrt;
+    ctx.font      = 'bold 8px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('SCHEDULER', SCHED.x, SCHED.y + SCHED.r + 13);
+
+    ctx.fillStyle = C.slate400;
+    ctx.font      = '7.5px monospace';
+    ctx.fillText('Slurm · K8s', SCHED.x, SCHED.y + SCHED.r + 24);
+    ctx.restore();
+
+    /* -- On-prem cluster box -- */
+    rrect(CBOX.x, CBOX.y, CBOX.w, CBOX.h, 8);
+    ctx.fillStyle   = 'rgba(22,35,60,0.72)';
+    ctx.fill();
+    ctx.strokeStyle = C.amber;
+    ctx.lineWidth   = 1.5;
+    ctx.stroke();
+
+    ctx.fillStyle = C.amber;
+    ctx.font      = 'bold 8px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('ON-PREM CLUSTER', GCX, CBOX.y - 9);
+
+    ctx.fillStyle = C.slate600;
+    ctx.font      = '7.5px monospace';
+    ctx.fillText('OpenHPC · Slurm · Kubernetes', GCX, CBOX.y + CBOX.h + 13);
+
+    /* Compute nodes */
+    GNODES.forEach(n => {
+      const active = n.active > 0;
+      const pulse  = active ? Math.sin(ts * 0.0025 + n.phaseOff) * 0.4 + 0.6 : 0;
+
+      ctx.save();
+      if (active) { ctx.shadowColor = C.amber; ctx.shadowBlur = 9 * pulse; }
+
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, 12, 0, Math.PI * 2);
+      ctx.fillStyle   = active ? `rgba(245,158,11,${0.06 + pulse * 0.12})` : 'rgba(255,255,255,0.03)';
+      ctx.fill();
+      ctx.strokeStyle = active ? C.amber : C.slate600;
+      ctx.lineWidth   = active ? 1.8 : 1;
+      ctx.stroke();
+      ctx.restore();
+
+      drawServerIcon(n.x, n.y, active ? C.amber : C.slate600);
+    });
+
+    /* -- Cloud nodes -- */
+    CLOUDS.forEach(cl => {
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(cl.x, cl.y, 24, 0, Math.PI * 2);
+      ctx.fillStyle   = C.navy800;
+      ctx.fill();
+      ctx.strokeStyle = cl.color;
+      ctx.lineWidth   = 2;
+      ctx.stroke();
+      drawCloudShape(cl.x, cl.y - 2, 18, cl.color);
+
+      ctx.fillStyle = cl.color;
+      ctx.font      = 'bold 9px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(cl.name, cl.x, cl.y + 37);
+
+      ctx.fillStyle = C.slate400;
+      ctx.font      = '7.5px monospace';
+      ctx.fillText(cl.k8s, cl.x, cl.y + 48);
+      ctx.restore();
+    });
+
+    /* -- In-flight packets -- */
+    packets.forEach(p => {
+      let pos;
+      if (p.phase === 0) {
+        pos = { x: lerp(p.p0.x, p.p1.x, p.t), y: lerp(p.p0.y, p.p1.y, p.t) };
+      } else {
+        pos = quadBez(p.p1, p.cp, p.p2, p.t);
+      }
+
+      const pw = 22, ph = 14;
+      ctx.save();
+      ctx.shadowColor = p.color;
+      ctx.shadowBlur  = 7;
+      rrect(pos.x - pw / 2, pos.y - ph / 2, pw, ph, 3);
+      ctx.fillStyle   = p.color;
+      ctx.globalAlpha = 0.93;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      ctx.fillStyle = (p.color === C.amber) ? '#0b1220' : '#ffffff';
+      ctx.font      = 'bold 6px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(p.job.label.substring(0, 5), pos.x, pos.y + 2.5);
+      ctx.restore();
+    });
+
+    rafId = requestAnimationFrame(frame);
+  }
+
+  /* Seed queue */
+  spawnJob(); spawnJob(); spawnJob();
+
+  /* Pause when off-screen */
+  const io = new IntersectionObserver(([e]) => {
+    if (e.isIntersecting) {
+      if (!rafId) rafId = requestAnimationFrame(frame);
+    } else {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+  }, { threshold: 0.1 });
+  io.observe(canvas);
+
+  rafId = requestAnimationFrame(frame);
+})();
+</script>
 </body>
 </html>

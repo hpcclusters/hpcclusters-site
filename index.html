@@ -175,8 +175,8 @@
 <script src="assets/script.js"></script>
 <script>
 /* ============================================================
-   HPC Cluster animation v2 — job dispatch to on-prem + cloud burst
-   Larger canvas (600×480), readable fonts, spread-out layout
+   HPC Cluster animation v3 — larger fonts & elements
+   Canvas 600×480, fonts bumped ~50% vs v2
    ============================================================ */
 (function () {
   'use strict';
@@ -208,23 +208,14 @@
     gcp:      '#4285F4',
   };
 
-  /* ---- Layout (all coordinates in 600×480 space) ---- */
-
-  /* Job queue */
-  const QX   = 16;
-  const QW   = 82;
-  const QH   = 32;
-  const QGAP = 12;
-  const QTOP = 88;
+  /* ---- Layout ---- */
+  const QX = 10, QW = 96, QH = 40, QGAP = 10, QTOP = 72;
   const QEXIT_X = QX + QW + 2;
 
-  /* Scheduler — centered vertically */
   const SCHED = { x: 178, y: 240, r: 36 };
 
-  /* On-prem cluster grid 3×3 */
   const GCOLS = 3, GROWS = 3, GSPACE = 42;
-  const GCX = 325, GCY = 240;
-  const NODE_R = 15;
+  const GCX = 322, GCY = 240, NODE_R = 15;
   const GNODES = [];
   for (let r = 0; r < GROWS; r++)
     for (let c = 0; c < GCOLS; c++)
@@ -235,15 +226,13 @@
         phaseOff: Math.random() * Math.PI * 2,
       });
 
-  /* Cloud targets — spread across the full height */
   const CLOUD_R = 30;
   const CLOUDS = [
-    { x: 522, y:  96, color: C.aws,   name: 'AWS',   k8s: 'EKS' },
-    { x: 522, y: 240, color: C.azure, name: 'Azure', k8s: 'AKS' },
-    { x: 522, y: 384, color: C.gcp,   name: 'GCP',   k8s: 'GKE' },
+    { x: 530, y:  88, color: C.aws,   name: 'AWS',   k8s: 'EKS' },
+    { x: 530, y: 240, color: C.azure, name: 'Azure', k8s: 'AKS' },
+    { x: 530, y: 392, color: C.gcp,   name: 'GCP',   k8s: 'GKE' },
   ];
 
-  /* Cluster bounding box */
   const CPAD = 20;
   const CBOX = {
     x: GCX - GSPACE - CPAD,
@@ -275,7 +264,7 @@
     if (!queue.length) return;
     const job = queue.shift();
     const toCloud = Math.random() < 0.38;
-    const startY = QTOP + 16;
+    const startY = QTOP + QH / 2;
 
     if (toCloud) {
       const cl = CLOUDS[Math.floor(Math.random() * CLOUDS.length)];
@@ -338,8 +327,8 @@
     const dt  = Math.min(now - prevT, 0.05);
     prevT = now;
 
-    if (now - lastSpawn    > 1.7)                      { spawnJob();    lastSpawn    = now; }
-    if (now - lastDispatch > 2.3 && queue.length > 0)  { dispatchJob(); lastDispatch = now; }
+    if (now - lastSpawn    > 1.7)                     { spawnJob();    lastSpawn    = now; }
+    if (now - lastDispatch > 2.3 && queue.length > 0) { dispatchJob(); lastDispatch = now; }
 
     GNODES.forEach(n => { if (n.active > 0) n.active -= dt; });
 
@@ -352,7 +341,7 @@
     /* ===== RENDER ===== */
     ctx.clearRect(0, 0, LW, LH);
 
-    /* -- Static paths -- */
+    /* -- Paths -- */
     ctx.save();
     ctx.setLineDash([4, 8]); ctx.strokeStyle = C.pathLine; ctx.lineWidth = 1.8; ctx.lineCap = 'round';
     drawPath(QEXIT_X, SCHED.y, SCHED.x - SCHED.r - 1, SCHED.y);
@@ -367,9 +356,9 @@
 
     /* -- Job queue -- */
     ctx.fillStyle = C.amber;
-    ctx.font = 'bold 12px monospace';
+    ctx.font = 'bold 16px monospace';
     ctx.textAlign = 'left';
-    ctx.fillText('JOB QUEUE', QX, QTOP - 12);
+    ctx.fillText('JOB QUEUE', QX, QTOP - 10);
 
     queue.forEach((job, i) => {
       const qy = QTOP + i * (QH + QGAP);
@@ -377,9 +366,9 @@
       ctx.fillStyle = C.navy700; ctx.fill();
       ctx.strokeStyle = C.slate600; ctx.lineWidth = 1; ctx.stroke();
       ctx.fillStyle = C.slate200;
-      ctx.font = '11px monospace';
+      ctx.font = '14px monospace';
       ctx.textAlign = 'center';
-      ctx.fillText(job.label, QX + QW / 2, qy + 21);
+      ctx.fillText(job.label, QX + QW / 2, qy + QH / 2 + 5);
     });
 
     ctx.fillStyle = C.slate600;
@@ -392,12 +381,12 @@
     ctx.strokeStyle = C.amberBrt; ctx.lineWidth = 2.5; ctx.stroke();
     drawServerIcon(SCHED.x, SCHED.y - 2, C.amberBrt, 1.2);
     ctx.fillStyle = C.amberBrt;
-    ctx.font = 'bold 11px monospace';
+    ctx.font = 'bold 14px monospace';
     ctx.textAlign = 'center';
-    ctx.fillText('SCHEDULER', SCHED.x, SCHED.y + SCHED.r + 16);
+    ctx.fillText('SCHEDULER', SCHED.x, SCHED.y + SCHED.r + 20);
     ctx.fillStyle = C.slate400;
-    ctx.font = '10px monospace';
-    ctx.fillText('Slurm · K8s', SCHED.x, SCHED.y + SCHED.r + 30);
+    ctx.font = '13px monospace';
+    ctx.fillText('Slurm · K8s', SCHED.x, SCHED.y + SCHED.r + 36);
     ctx.restore();
 
     /* -- Cluster box -- */
@@ -406,13 +395,13 @@
     ctx.strokeStyle = C.amber; ctx.lineWidth = 1.8; ctx.stroke();
 
     ctx.fillStyle = C.amber;
-    ctx.font = 'bold 11px monospace';
+    ctx.font = 'bold 14px monospace';
     ctx.textAlign = 'center';
     ctx.fillText('ON-PREM CLUSTER', GCX, CBOX.y - 10);
 
     ctx.fillStyle = C.slate600;
-    ctx.font = '10px monospace';
-    ctx.fillText('OpenHPC · Slurm · Kubernetes', GCX, CBOX.y + CBOX.h + 16);
+    ctx.font = '12px monospace';
+    ctx.fillText('Slurm · K8s · OpenHPC', GCX, CBOX.y + CBOX.h + 18);
 
     /* Compute nodes */
     GNODES.forEach(n => {
@@ -438,12 +427,12 @@
       ctx.strokeStyle = cl.color; ctx.lineWidth = 2.5; ctx.stroke();
       drawCloudShape(cl.x, cl.y - 3, 22, cl.color);
       ctx.fillStyle = cl.color;
-      ctx.font = 'bold 12px monospace';
+      ctx.font = 'bold 16px monospace';
       ctx.textAlign = 'center';
-      ctx.fillText(cl.name, cl.x, cl.y + CLOUD_R + 18);
+      ctx.fillText(cl.name, cl.x, cl.y + CLOUD_R + 22);
       ctx.fillStyle = C.slate400;
-      ctx.font = '10px monospace';
-      ctx.fillText(cl.k8s, cl.x, cl.y + CLOUD_R + 32);
+      ctx.font = '13px monospace';
+      ctx.fillText(cl.k8s, cl.x, cl.y + CLOUD_R + 38);
       ctx.restore();
     });
 
@@ -453,15 +442,15 @@
       if (p.phase === 0) pos = { x: lerp(p.p0.x, p.p1.x, p.t), y: lerp(p.p0.y, p.p1.y, p.t) };
       else               pos = quadBez(p.p1, p.cp, p.p2, p.t);
 
-      const pw = 36, ph = 18;
+      const pw = 48, ph = 24;
       ctx.save();
       ctx.shadowColor = p.color; ctx.shadowBlur = 8;
-      rrect(pos.x - pw / 2, pos.y - ph / 2, pw, ph, 4);
+      rrect(pos.x - pw / 2, pos.y - ph / 2, pw, ph, 5);
       ctx.fillStyle = p.color; ctx.globalAlpha = 0.93; ctx.fill(); ctx.globalAlpha = 1;
       ctx.fillStyle = (p.color === C.amber) ? '#0b1220' : '#ffffff';
-      ctx.font = 'bold 9px monospace';
+      ctx.font = 'bold 11px monospace';
       ctx.textAlign = 'center';
-      ctx.fillText(p.job.label.substring(0, 7), pos.x, pos.y + 3.5);
+      ctx.fillText(p.job.label.substring(0, 7), pos.x, pos.y + 4);
       ctx.restore();
     });
 

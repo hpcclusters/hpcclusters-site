@@ -45,7 +45,7 @@
       </div>
     </div>
     <div>
-      <canvas id="hpc-anim" class="hybrid-flow" width="600" height="380"
+      <canvas id="hpc-anim" class="hybrid-flow" width="600" height="480"
         role="img"
         aria-label="Animation showing HPC jobs dispatched to an on-premises cluster running Slurm and Kubernetes, with burst jobs routed to AWS EKS, Azure AKS, and Google GKE"></canvas>
     </div>
@@ -175,22 +175,19 @@
 <script src="assets/script.js"></script>
 <script>
 /* ============================================================
-   HPC Cluster animation — job dispatch to on-prem + cloud burst
+   HPC Cluster animation v2 — job dispatch to on-prem + cloud burst
+   Larger canvas (600×480), readable fonts, spread-out layout
    ============================================================ */
 (function () {
   'use strict';
 
   const canvas = document.getElementById('hpc-anim');
   if (!canvas) return;
-
-  /* Respect reduced-motion preference */
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   const ctx = canvas.getContext('2d');
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
-
-  /* Logical canvas size */
-  const LW = 600, LH = 380;
+  const LW = 600, LH = 480;
   canvas.width  = LW * dpr;
   canvas.height = LH * dpr;
   ctx.scale(dpr, dpr);
@@ -211,42 +208,43 @@
     gcp:      '#4285F4',
   };
 
-  /* ---- Layout ---- */
-  /* Job queue */
-  const QX   = 18;   /* left edge of job cards */
-  const QW   = 70;   /* card width */
-  const QH   = 24;   /* card height */
-  const QGAP = 10;   /* gap between cards */
-  const QTOP = 80;   /* y of first card */
-  const QEXIT_X = QX + QW + 2;  /* right edge where packets enter the path */
+  /* ---- Layout (all coordinates in 600×480 space) ---- */
 
-  /* Scheduler */
-  const SCHED = { x: 175, y: 190, r: 28 };
+  /* Job queue */
+  const QX   = 16;
+  const QW   = 82;
+  const QH   = 32;
+  const QGAP = 12;
+  const QTOP = 88;
+  const QEXIT_X = QX + QW + 2;
+
+  /* Scheduler — centered vertically */
+  const SCHED = { x: 178, y: 240, r: 36 };
 
   /* On-prem cluster grid 3×3 */
-  const GCOLS = 3, GROWS = 3, GSPACE = 36;
-  const GCX = 327, GCY = 192;
+  const GCOLS = 3, GROWS = 3, GSPACE = 42;
+  const GCX = 325, GCY = 240;
+  const NODE_R = 15;
   const GNODES = [];
-  for (let r = 0; r < GROWS; r++) {
-    for (let c = 0; c < GCOLS; c++) {
+  for (let r = 0; r < GROWS; r++)
+    for (let c = 0; c < GCOLS; c++)
       GNODES.push({
         x: GCX + (c - 1) * GSPACE,
         y: GCY + (r - 1) * GSPACE,
-        active: 0,            /* seconds of active time remaining */
+        active: 0,
         phaseOff: Math.random() * Math.PI * 2,
       });
-    }
-  }
 
-  /* Cloud targets */
+  /* Cloud targets — spread across the full height */
+  const CLOUD_R = 30;
   const CLOUDS = [
-    { x: 520, y:  82, color: C.aws,   name: 'AWS',   k8s: 'EKS' },
-    { x: 520, y: 192, color: C.azure, name: 'Azure', k8s: 'AKS' },
-    { x: 520, y: 302, color: C.gcp,   name: 'GCP',   k8s: 'GKE' },
+    { x: 522, y:  96, color: C.aws,   name: 'AWS',   k8s: 'EKS' },
+    { x: 522, y: 240, color: C.azure, name: 'Azure', k8s: 'AKS' },
+    { x: 522, y: 384, color: C.gcp,   name: 'GCP',   k8s: 'GKE' },
   ];
 
   /* Cluster bounding box */
-  const CPAD = 18;
+  const CPAD = 20;
   const CBOX = {
     x: GCX - GSPACE - CPAD,
     y: GCY - GSPACE - CPAD,
@@ -255,325 +253,228 @@
   };
 
   /* ---- State ---- */
-  const JOB_LABELS = ['CFD', 'ML', 'Genome', 'MD Sim', 'FEA', 'LLM', 'Monte', 'DFT', 'Batch'];
-  let labelIdx = 0;
-  let queue = [];      /* { label: string } */
-  let packets = [];    /* in-flight job packets */
-
-  let lastSpawn    = -2;
-  let lastDispatch = -3;
+  const JOB_LABELS = ['CFD', 'ML Train', 'Genomics', 'MD Sim', 'FEA', 'LLM', 'Monte', 'DFT'];
+  let labelIdx = 0, queue = [], packets = [];
+  let lastSpawn = -2, lastDispatch = -3;
 
   /* ---- Helpers ---- */
   function lerp(a, b, t) { return a + (b - a) * t; }
-
   function quadBez(p0, cp, p1, t) {
     const ax = lerp(p0.x, cp.x, t), ay = lerp(p0.y, cp.y, t);
     const bx = lerp(cp.x, p1.x, t), by = lerp(cp.y, p1.y, t);
     return { x: lerp(ax, bx, t), y: lerp(ay, by, t) };
   }
+  function rrect(x, y, w, h, r) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); }
 
-  function rrect(x, y, w, h, r) {
-    ctx.beginPath();
-    ctx.roundRect(x, y, w, h, r);
-  }
-
-  /* ---- Spawn and dispatch ---- */
+  /* ---- Spawn / dispatch ---- */
   function spawnJob() {
-    if (queue.length < 5) {
-      queue.push({ label: JOB_LABELS[labelIdx++ % JOB_LABELS.length] });
-    }
+    if (queue.length < 5) queue.push({ label: JOB_LABELS[labelIdx++ % JOB_LABELS.length] });
   }
 
   function dispatchJob() {
     if (!queue.length) return;
     const job = queue.shift();
     const toCloud = Math.random() < 0.38;
-    const startY = QTOP + 12;  /* packet leaves from top of queue area */
+    const startY = QTOP + 16;
 
     if (toCloud) {
       const cl = CLOUDS[Math.floor(Math.random() * CLOUDS.length)];
-      /* Phase 0: straight left→sched  |  Phase 1: curved sched→cloud */
       const cpx = lerp(SCHED.x, cl.x, 0.5);
-      const cpy = lerp(SCHED.y, cl.y, 0.5) + (cl.y < SCHED.y ? -28 : cl.y > SCHED.y ? 28 : 0);
-      packets.push({
-        job, color: cl.color,
-        phase: 0, t: 0,
-        p0: { x: QEXIT_X, y: startY },
-        p1: { x: SCHED.x, y: SCHED.y },
-        p2: { x: cl.x - 24, y: cl.y },
-        cp: { x: cpx, y: cpy },
-        targetNode: null, isCloud: true,
-      });
+      const cpy = lerp(SCHED.y, cl.y, 0.5) + (cl.y < SCHED.y ? -32 : cl.y > SCHED.y ? 32 : 0);
+      packets.push({ job, color: cl.color, phase: 0, t: 0,
+        p0: { x: QEXIT_X, y: startY }, p1: { x: SCHED.x, y: SCHED.y },
+        p2: { x: cl.x - CLOUD_R, y: cl.y }, cp: { x: cpx, y: cpy },
+        targetNode: null, isCloud: true });
     } else {
       const idle = GNODES.filter(n => n.active <= 0);
       if (!idle.length) { queue.unshift(job); return; }
       const node = idle[Math.floor(Math.random() * idle.length)];
       const cpx = lerp(SCHED.x, node.x, 0.5);
-      const cpy = lerp(SCHED.y, node.y, 0.5) - 10;
-      packets.push({
-        job, color: C.amber,
-        phase: 0, t: 0,
-        p0: { x: QEXIT_X, y: startY },
-        p1: { x: SCHED.x, y: SCHED.y },
-        p2: { x: node.x, y: node.y },
-        cp: { x: cpx, y: cpy },
-        targetNode: node, isCloud: false,
-      });
-      /* Reserve node immediately */
+      const cpy = lerp(SCHED.y, node.y, 0.5) - 12;
+      packets.push({ job, color: C.amber, phase: 0, t: 0,
+        p0: { x: QEXIT_X, y: startY }, p1: { x: SCHED.x, y: SCHED.y },
+        p2: { x: node.x, y: node.y }, cp: { x: cpx, y: cpy },
+        targetNode: node, isCloud: false });
       node.active = 0.01;
     }
   }
 
-  /* ---- Drawing primitives ---- */
-
+  /* ---- Drawing ---- */
   function drawPath(x1, y1, x2, y2, cpx, cpy) {
     ctx.beginPath();
-    if (cpx !== undefined) {
-      ctx.moveTo(x1, y1);
-      ctx.quadraticCurveTo(cpx, cpy, x2, y2);
-    } else {
-      ctx.moveTo(x1, y1);
-      ctx.lineTo(x2, y2);
-    }
+    if (cpx !== undefined) { ctx.moveTo(x1, y1); ctx.quadraticCurveTo(cpx, cpy, x2, y2); }
+    else { ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); }
     ctx.stroke();
   }
 
-  function drawServerIcon(cx, cy, color) {
+  function drawServerIcon(cx, cy, color, scale) {
+    const s = scale || 1;
+    const w = 14 * s, h = 5 * s;
     ctx.fillStyle = color;
-    ctx.fillRect(cx - 6, cy - 5, 12, 4);
-    ctx.fillRect(cx - 6, cy + 1, 12, 4);
-    /* status LED */
+    ctx.fillRect(cx - w / 2, cy - h - 1, w, h);
+    ctx.fillRect(cx - w / 2, cy + 1, w, h);
     ctx.fillStyle = C.navy700;
-    ctx.beginPath(); ctx.arc(cx + 3, cy - 3, 1.2, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.arc(cx + 3, cy + 3, 1.2, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx + w / 2 - 3, cy - h / 2 - 1, 1.5 * s, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx + w / 2 - 3, cy + h / 2 + 1, 1.5 * s, 0, Math.PI * 2); ctx.fill();
   }
 
   function drawCloudShape(cx, cy, size, color) {
     const s = size / 18;
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.scale(s, s);
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 1.8 / s;
-    ctx.lineJoin = 'round';
+    ctx.save(); ctx.translate(cx, cy); ctx.scale(s, s);
+    ctx.strokeStyle = color; ctx.lineWidth = 2 / s; ctx.lineJoin = 'round';
     ctx.beginPath();
     ctx.arc(-5, 3, 6,  Math.PI * 0.55, Math.PI * 1.5);
-    ctx.arc( 0,-5, 7.5, Math.PI,        0);
-    ctx.arc( 7, 2, 5,  Math.PI * 1.5,  Math.PI * 0.5);
-    ctx.lineTo(-5, 7);
-    ctx.closePath();
-    ctx.stroke();
+    ctx.arc( 0,-5, 7.5, Math.PI, 0);
+    ctx.arc( 7, 2, 5,  Math.PI * 1.5, Math.PI * 0.5);
+    ctx.lineTo(-5, 7); ctx.closePath(); ctx.stroke();
     ctx.restore();
   }
 
   /* ---- Main frame ---- */
-  let rafId;
-  let prevT = 0;
+  let rafId, prevT = 0;
 
   function frame(ts) {
     const now = ts * 0.001;
     const dt  = Math.min(now - prevT, 0.05);
     prevT = now;
 
-    /* Timing */
-    if (now - lastSpawn    > 1.7)  { spawnJob();    lastSpawn    = now; }
-    if (now - lastDispatch > 2.3 && queue.length) { dispatchJob(); lastDispatch = now; }
+    if (now - lastSpawn    > 1.7)                      { spawnJob();    lastSpawn    = now; }
+    if (now - lastDispatch > 2.3 && queue.length > 0)  { dispatchJob(); lastDispatch = now; }
 
-    /* Decay active nodes */
     GNODES.forEach(n => { if (n.active > 0) n.active -= dt; });
 
-    /* Update packets */
-    const PH0_SPEED = 0.026, PH1_SPEED = 0.018;
     packets.forEach(p => {
-      if (p.phase === 0) {
-        p.t += PH0_SPEED;
-        if (p.t >= 1) { p.phase = 1; p.t = 0; }
-      } else {
-        p.t += PH1_SPEED;
-        if (p.t >= 1) {
-          p.done = true;
-          if (!p.isCloud && p.targetNode) {
-            p.targetNode.active = 3 + Math.random() * 5;
-          }
-        }
-      }
+      if (p.phase === 0) { p.t += 0.026; if (p.t >= 1) { p.phase = 1; p.t = 0; } }
+      else               { p.t += 0.018; if (p.t >= 1) { p.done = true; if (!p.isCloud && p.targetNode) p.targetNode.active = 3 + Math.random() * 5; } }
     });
     packets = packets.filter(p => !p.done);
 
     /* ===== RENDER ===== */
     ctx.clearRect(0, 0, LW, LH);
 
-    /* -- Static connection paths -- */
+    /* -- Static paths -- */
     ctx.save();
-    ctx.setLineDash([3, 7]);
-    ctx.strokeStyle = C.pathLine;
-    ctx.lineWidth   = 1.5;
-    ctx.lineCap     = 'round';
-
-    /* queue exit → sched */
+    ctx.setLineDash([4, 8]); ctx.strokeStyle = C.pathLine; ctx.lineWidth = 1.8; ctx.lineCap = 'round';
     drawPath(QEXIT_X, SCHED.y, SCHED.x - SCHED.r - 1, SCHED.y);
-
-    /* sched → cluster */
     drawPath(SCHED.x + SCHED.r + 1, SCHED.y, CBOX.x, SCHED.y);
-
-    /* cluster → each cloud (curved) */
     CLOUDS.forEach(cl => {
-      const ox = CBOX.x + CBOX.w;
-      const oy = SCHED.y;
-      const cpx = (ox + cl.x - 24) / 2;
-      const cpy = (oy + cl.y) / 2 + (cl.y < oy ? -30 : cl.y > oy ? 30 : 0);
-      drawPath(ox, oy, cl.x - 24, cl.y, cpx, cpy);
+      const ox = CBOX.x + CBOX.w, oy = SCHED.y;
+      const cpx = (ox + cl.x - CLOUD_R) / 2;
+      const cpy = (oy + cl.y) / 2 + (cl.y < oy ? -36 : cl.y > oy ? 36 : 0);
+      drawPath(ox, oy, cl.x - CLOUD_R, cl.y, cpx, cpy);
     });
-
     ctx.restore();
 
     /* -- Job queue -- */
     ctx.fillStyle = C.amber;
-    ctx.font = 'bold 8px monospace';
+    ctx.font = 'bold 12px monospace';
     ctx.textAlign = 'left';
-    ctx.fillText('JOB QUEUE', QX, QTOP - 10);
+    ctx.fillText('JOB QUEUE', QX, QTOP - 12);
 
     queue.forEach((job, i) => {
       const qy = QTOP + i * (QH + QGAP);
-      rrect(QX, qy, QW, QH, 4);
-      ctx.fillStyle   = C.navy700;
-      ctx.fill();
-      ctx.strokeStyle = C.slate600;
-      ctx.lineWidth   = 1;
-      ctx.stroke();
-      ctx.fillStyle   = C.slate200;
-      ctx.font        = '7.5px monospace';
-      ctx.textAlign   = 'center';
-      ctx.fillText(job.label, QX + QW / 2, qy + 16);
+      rrect(QX, qy, QW, QH, 5);
+      ctx.fillStyle = C.navy700; ctx.fill();
+      ctx.strokeStyle = C.slate600; ctx.lineWidth = 1; ctx.stroke();
+      ctx.fillStyle = C.slate200;
+      ctx.font = '11px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(job.label, QX + QW / 2, qy + 21);
     });
 
-    /* Queue-to-sched connector dot */
     ctx.fillStyle = C.slate600;
-    ctx.beginPath();
-    ctx.arc(QEXIT_X + 2, SCHED.y, 3, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.beginPath(); ctx.arc(QEXIT_X + 2, SCHED.y, 3.5, 0, Math.PI * 2); ctx.fill();
 
-    /* -- Scheduler node -- */
+    /* -- Scheduler -- */
     ctx.save();
-    ctx.beginPath();
-    ctx.arc(SCHED.x, SCHED.y, SCHED.r, 0, Math.PI * 2);
-    ctx.fillStyle   = C.navy800;
-    ctx.fill();
-    ctx.strokeStyle = C.amberBrt;
-    ctx.lineWidth   = 2;
-    ctx.stroke();
-    drawServerIcon(SCHED.x, SCHED.y - 2, C.amberBrt);
-
+    ctx.beginPath(); ctx.arc(SCHED.x, SCHED.y, SCHED.r, 0, Math.PI * 2);
+    ctx.fillStyle = C.navy800; ctx.fill();
+    ctx.strokeStyle = C.amberBrt; ctx.lineWidth = 2.5; ctx.stroke();
+    drawServerIcon(SCHED.x, SCHED.y - 2, C.amberBrt, 1.2);
     ctx.fillStyle = C.amberBrt;
-    ctx.font      = 'bold 8px monospace';
+    ctx.font = 'bold 11px monospace';
     ctx.textAlign = 'center';
-    ctx.fillText('SCHEDULER', SCHED.x, SCHED.y + SCHED.r + 13);
-
+    ctx.fillText('SCHEDULER', SCHED.x, SCHED.y + SCHED.r + 16);
     ctx.fillStyle = C.slate400;
-    ctx.font      = '7.5px monospace';
-    ctx.fillText('Slurm · K8s', SCHED.x, SCHED.y + SCHED.r + 24);
+    ctx.font = '10px monospace';
+    ctx.fillText('Slurm · K8s', SCHED.x, SCHED.y + SCHED.r + 30);
     ctx.restore();
 
-    /* -- On-prem cluster box -- */
-    rrect(CBOX.x, CBOX.y, CBOX.w, CBOX.h, 8);
-    ctx.fillStyle   = 'rgba(22,35,60,0.72)';
-    ctx.fill();
-    ctx.strokeStyle = C.amber;
-    ctx.lineWidth   = 1.5;
-    ctx.stroke();
+    /* -- Cluster box -- */
+    rrect(CBOX.x, CBOX.y, CBOX.w, CBOX.h, 10);
+    ctx.fillStyle = 'rgba(22,35,60,0.72)'; ctx.fill();
+    ctx.strokeStyle = C.amber; ctx.lineWidth = 1.8; ctx.stroke();
 
     ctx.fillStyle = C.amber;
-    ctx.font      = 'bold 8px monospace';
+    ctx.font = 'bold 11px monospace';
     ctx.textAlign = 'center';
-    ctx.fillText('ON-PREM CLUSTER', GCX, CBOX.y - 9);
+    ctx.fillText('ON-PREM CLUSTER', GCX, CBOX.y - 10);
 
     ctx.fillStyle = C.slate600;
-    ctx.font      = '7.5px monospace';
-    ctx.fillText('OpenHPC · Slurm · Kubernetes', GCX, CBOX.y + CBOX.h + 13);
+    ctx.font = '10px monospace';
+    ctx.fillText('OpenHPC · Slurm · Kubernetes', GCX, CBOX.y + CBOX.h + 16);
 
     /* Compute nodes */
     GNODES.forEach(n => {
       const active = n.active > 0;
       const pulse  = active ? Math.sin(ts * 0.0025 + n.phaseOff) * 0.4 + 0.6 : 0;
-
       ctx.save();
-      if (active) { ctx.shadowColor = C.amber; ctx.shadowBlur = 9 * pulse; }
-
-      ctx.beginPath();
-      ctx.arc(n.x, n.y, 12, 0, Math.PI * 2);
-      ctx.fillStyle   = active ? `rgba(245,158,11,${0.06 + pulse * 0.12})` : 'rgba(255,255,255,0.03)';
+      if (active) { ctx.shadowColor = C.amber; ctx.shadowBlur = 12 * pulse; }
+      ctx.beginPath(); ctx.arc(n.x, n.y, NODE_R, 0, Math.PI * 2);
+      ctx.fillStyle   = active ? `rgba(245,158,11,${0.06 + pulse * 0.14})` : 'rgba(255,255,255,0.03)';
       ctx.fill();
       ctx.strokeStyle = active ? C.amber : C.slate600;
-      ctx.lineWidth   = active ? 1.8 : 1;
+      ctx.lineWidth   = active ? 2 : 1;
       ctx.stroke();
       ctx.restore();
-
-      drawServerIcon(n.x, n.y, active ? C.amber : C.slate600);
+      drawServerIcon(n.x, n.y, active ? C.amber : C.slate600, 1.1);
     });
 
     /* -- Cloud nodes -- */
     CLOUDS.forEach(cl => {
       ctx.save();
-      ctx.beginPath();
-      ctx.arc(cl.x, cl.y, 24, 0, Math.PI * 2);
-      ctx.fillStyle   = C.navy800;
-      ctx.fill();
-      ctx.strokeStyle = cl.color;
-      ctx.lineWidth   = 2;
-      ctx.stroke();
-      drawCloudShape(cl.x, cl.y - 2, 18, cl.color);
-
+      ctx.beginPath(); ctx.arc(cl.x, cl.y, CLOUD_R, 0, Math.PI * 2);
+      ctx.fillStyle = C.navy800; ctx.fill();
+      ctx.strokeStyle = cl.color; ctx.lineWidth = 2.5; ctx.stroke();
+      drawCloudShape(cl.x, cl.y - 3, 22, cl.color);
       ctx.fillStyle = cl.color;
-      ctx.font      = 'bold 9px monospace';
+      ctx.font = 'bold 12px monospace';
       ctx.textAlign = 'center';
-      ctx.fillText(cl.name, cl.x, cl.y + 37);
-
+      ctx.fillText(cl.name, cl.x, cl.y + CLOUD_R + 18);
       ctx.fillStyle = C.slate400;
-      ctx.font      = '7.5px monospace';
-      ctx.fillText(cl.k8s, cl.x, cl.y + 48);
+      ctx.font = '10px monospace';
+      ctx.fillText(cl.k8s, cl.x, cl.y + CLOUD_R + 32);
       ctx.restore();
     });
 
     /* -- In-flight packets -- */
     packets.forEach(p => {
       let pos;
-      if (p.phase === 0) {
-        pos = { x: lerp(p.p0.x, p.p1.x, p.t), y: lerp(p.p0.y, p.p1.y, p.t) };
-      } else {
-        pos = quadBez(p.p1, p.cp, p.p2, p.t);
-      }
+      if (p.phase === 0) pos = { x: lerp(p.p0.x, p.p1.x, p.t), y: lerp(p.p0.y, p.p1.y, p.t) };
+      else               pos = quadBez(p.p1, p.cp, p.p2, p.t);
 
-      const pw = 22, ph = 14;
+      const pw = 36, ph = 18;
       ctx.save();
-      ctx.shadowColor = p.color;
-      ctx.shadowBlur  = 7;
-      rrect(pos.x - pw / 2, pos.y - ph / 2, pw, ph, 3);
-      ctx.fillStyle   = p.color;
-      ctx.globalAlpha = 0.93;
-      ctx.fill();
-      ctx.globalAlpha = 1;
-
+      ctx.shadowColor = p.color; ctx.shadowBlur = 8;
+      rrect(pos.x - pw / 2, pos.y - ph / 2, pw, ph, 4);
+      ctx.fillStyle = p.color; ctx.globalAlpha = 0.93; ctx.fill(); ctx.globalAlpha = 1;
       ctx.fillStyle = (p.color === C.amber) ? '#0b1220' : '#ffffff';
-      ctx.font      = 'bold 6px monospace';
+      ctx.font = 'bold 9px monospace';
       ctx.textAlign = 'center';
-      ctx.fillText(p.job.label.substring(0, 5), pos.x, pos.y + 2.5);
+      ctx.fillText(p.job.label.substring(0, 7), pos.x, pos.y + 3.5);
       ctx.restore();
     });
 
     rafId = requestAnimationFrame(frame);
   }
 
-  /* Seed queue */
+  /* Seed the queue */
   spawnJob(); spawnJob(); spawnJob();
 
   /* Pause when off-screen */
   const io = new IntersectionObserver(([e]) => {
-    if (e.isIntersecting) {
-      if (!rafId) rafId = requestAnimationFrame(frame);
-    } else {
-      cancelAnimationFrame(rafId);
-      rafId = null;
-    }
+    if (e.isIntersecting) { if (!rafId) rafId = requestAnimationFrame(frame); }
+    else { cancelAnimationFrame(rafId); rafId = null; }
   }, { threshold: 0.1 });
   io.observe(canvas);
 

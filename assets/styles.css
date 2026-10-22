@@ -297,6 +297,23 @@ section { padding: 88px 0; }
 .card-link { text-decoration: none; }
 .card-link .card { height: 100%; display: flex; flex-direction: column; }
 .card-link .more { margin-top: auto; padding-top: 18px; font-weight: 600; font-size: 0.9rem; color: var(--navy-900); display: flex; align-items: center; gap: 6px; }
+
+.small-jobs {
+  margin-top: 32px;
+  padding: 20px 24px;
+  background: var(--white);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 28px;
+  flex-wrap: wrap;
+}
+.small-jobs p { color: var(--slate-600); font-size: 0.97rem; max-width: 66ch; }
+.small-jobs p strong { color: var(--navy-900); }
+.small-jobs a { font-weight: 600; font-size: 0.92rem; color: var(--navy-900); text-decoration: none; white-space: nowrap; }
+.small-jobs a:hover { color: var(--amber-500); }
 .card-link:hover .more { color: var(--amber-500); }
 
 /* ---------- stats / trust strip ---------- */
